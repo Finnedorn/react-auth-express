@@ -60,7 +60,7 @@ const Register = () => {
                     className="form-control w-50"
                     type="text"
                     value={accountData.name}
-                    onChange={(e) => changeData("text", e.target.value)}
+                    onChange={(e) => changeData("name", e.target.value)}
                   />
                 </label>
                 <label className="d-flex align-items-center py-3">

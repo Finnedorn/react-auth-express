@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 // importo useNavigate, un hook di react-router che mi permette di effettuare i redirects 
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 // importo l'hook di localStorage
 import useLocalStorage from "../assets/hooks/useLocalStorage";
 
@@ -21,6 +21,29 @@ const AuthProvider = ({children}) => {
     // mi servirà ad aprire la sessione di accesso effettuato dell'utente alla pagina 
     const [user, setUser] = useLocalStorage(null, 'user');
 
+
+    // setto una var per hostare i dettagli di user una volta effettuata la chiamata
+    let userInfo = {
+        name: "",
+        email: "",
+        id: ""
+    };
+    // setto uno state per raccogliere i dati
+    const [userData, setUserData] = useState(userInfo);
+
+    useEffect(() => {
+
+        if(user !== null){
+            userInfo = {
+                name: user.name,
+                email: user.email,
+                id: user.id
+            }
+            setUserData(userInfo);
+        }
+
+    }, [user]);
+
     // isLogged è la const che regola il middleware di login che redireziona 
     // l'utente che cerca di accedere alle pagine private
     // alla schermata di login
@@ -30,9 +53,10 @@ const AuthProvider = ({children}) => {
 
     // funzione di registrazione utente
     const register = async(payload) => {
+        console.log(payload);
         try{
             // effettuo la chiamata post inviando i dati dell'utente dal form al backend 
-            const response = await axios.post(apiUrl + '/auth/register', payload, {
+            const { data: response } = await axios.post(apiUrl + '/auth/register', payload, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -56,8 +80,9 @@ const AuthProvider = ({children}) => {
     const logIn = async(payload) => {
         try{
             console.log("axios");
-            // invio i dati del form di login al backend per la verifica
-            const response  = await axios.post(apiUrl + '/auth/login', payload);
+            // invio i dati del form di login al backend per la verifica 
+            // nell'api sono nella sezione data 
+            const { data: response }  = await axios.post(apiUrl + '/auth/login', payload);
             console.log(response);
             // aggiorno la variabile user con il valore di response
             setUser(response.data);
@@ -78,6 +103,7 @@ const AuthProvider = ({children}) => {
     // quindi si viene rispediti fuori dalle pagine private e alla pagina di login
     const logOut = () => {
         setUser(null);
+        setUserData(userInfo);
         navigate("/login");
     }
 
@@ -86,7 +112,8 @@ const AuthProvider = ({children}) => {
         isLogged,
         register,
         logIn,
-        logOut
+        logOut,
+        userData
     }
 
     return(

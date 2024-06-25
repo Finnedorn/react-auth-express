@@ -16,7 +16,7 @@ const LogChecker = ({ children }) => {
   if (!isLogged) {
     // una volta verificato lo stato di isLogged
     // effettuo un redirect alla dashboard
-    return <Navigate to="/" state={{ from: location }} />;
+    return <Navigate to="/login" state={{ from: location }} />;
   }
 
   return children;

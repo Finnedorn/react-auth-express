@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 // importo i layout
 import Layout from "./assets/components/Layout/Layout";
-import DashboardLayout from "./assets/components/DashboardLayout/DashboardLayout";
 // importo il provider di posts
 import { PostProvider } from "./contexts/PostContext";
 // importo il provider di autenticazione
@@ -31,15 +30,16 @@ function App() {
             <Routes>
 
               {/* Estensione del layout "nav + footer" a tutte le pagine */}
-              <Route path="/" element={ <Layout />}>
+              <Route path="/" element={<Layout />}>
                 {/* Rotte pubbliche */}
                 <Route path="*" element={<NotFound />} />
                 <Route index element={<Home />} />
+                <Route path="register" element={<Register />} />
                 <Route path="login" element={<Login />} />
               </Route>
 
               {/* Rotte protette dal middleware di autenticazione */}
-              <Route path="/" element={<DashboardLayout><Layout /></DashboardLayout>}>
+              <Route path="/" element={<LogChecker><Layout /></LogChecker>}>
                <Route path="posts">
                 <Route index element={<PostIndex />} />
                 <Route path=":id">
