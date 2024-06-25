@@ -13,12 +13,10 @@ const LogChecker = ({ children }) => {
 
   // se isLogged è false l'utente non avrà effettuato il login
   // di conseguenza verrà redirezionato sulla pagina di login
-  console.log(isLogged);
   if (!isLogged) {
     // una volta verificato lo stato di isLogged
-    // effettuo un redirect sulla pagina che l'utente voleva raggiungere
-    // prima di essere stato redirezionato al login 
-    return <Navigate to="/login" state={{ from: location }} />;
+    // effettuo un redirect alla dashboard
+    return <Navigate to="/" state={{ from: location }} />;
   }
 
   return children;

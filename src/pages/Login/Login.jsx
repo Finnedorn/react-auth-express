@@ -1,28 +1,45 @@
+import { useState } from "react";
 // importo l'hook di autenticazione
 import { useAuth } from "../../contexts/AuthContext";
-import { useLocation } from "react-router-dom";
 
 // creo la pagina di login dell'utente 
 const Login = () => {
+
     // estrapolo la funzione logIn 
     const { logIn } = useAuth();
 
-    // attivo uselocation così da tenere memoria della pagina 
-    // che l'utente voleva visitare prima del redirect forzato
-    const location = useLocation();
+    const dataToVerify = {
+        email: '',
+        password: ''
+    }
+
+    const [accountData, setAccountData] = useState(dataToVerify);
+
+    const [logError, setLogError] = useState(null);
+
+
+    const changeData = (key, value) => {
+        setAccountData(curr => ({
+            ...curr,
+            [key]: value
+        }));
+    }
+
 
     // al submit del form 
     // prendo l'evento ed effettuo un prevent default
     // attivo la funzione di login che cambia il valore di isLogged
     // peremttendo all'utente di bypassare il middleware
-    const handleLogin = (e) => {
+    const handleLogin  = async (e) => {
+        console.log("login")
         // prevento il refresh della pagina
         e.preventDefault();
-        // una volta verificato lo stato di isLogged
-        // effettuo un redirect sulla pagina che l'utente voleva raggiungere
-        // prima di essere stato redirezionato al login
-        const redirect = location.state?.from?.pathname || "/";
-        logIn(redirect);
+        try {
+            await logIn(accountData);
+            setAccountData(dataToVerify);
+        } catch (error) {
+            setLogError(error);
+        }
     }
 
 
@@ -34,25 +51,32 @@ const Login = () => {
                 </h1>
             <div className="card p-5 rounded-4">
                 <div>
-                    <form className="d-flex flex-wrap justify-content-center p-3">
+                    <form 
+                    onSubmit={handleLogin}
+                    className="d-flex flex-wrap justify-content-center p-3">
                         <div className=" w-100">
                             <label className="d-flex align-items-center py-3">
                                 <span className="fs-3 pe-5 me-3">Email</span>
                                 <input
                                 className="form-control w-50"
                                 type="email"
+                                value={accountData.email}
+                                onChange={e => changeData('email', e.target.value)}
                                 />
                             </label>
                             <label className="d-flex align-items-center py-3">
                                 <span className="fs-3 pe-2 me-3">Password</span>
                                 <input
-                                
                                 className="form-control w-50"
                                 type="password"
+                                value={accountData.password}
+                                onChange={e => changeData('password', e.target.value)}
                                 />
                             </label>
                         </div>
-                        <button onClick={handleLogin} className=" btn btn-primary fs-4 mt-3">
+                        <button 
+                        type="submit" 
+                        className=" btn btn-primary fs-4 mt-3">
                             Login
                         </button>
                     </form>

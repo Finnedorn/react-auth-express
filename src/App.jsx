@@ -1,14 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./assets/components/Layout";
+// importo i layout
+import Layout from "./assets/components/Layout/Layout";
+import DashboardLayout from "./assets/components/DashboardLayout/DashboardLayout";
 // importo il provider di posts
 import { PostProvider } from "./contexts/PostContext";
 // importo il provider di autenticazione
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 // importo il middleware di autenticazione
 import LogChecker from "./middlewares/logChecker";
 // importo la pagina di login
 import Login from "./pages/Login/Login";
-import { Outlet } from "react-router-dom";
+// importo la pagina di register
+import Register from "./pages/Register/Register";
+
 
 // import le rotte alle varie pagine
 import Home from "./pages/Home/Home";
@@ -23,11 +27,11 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <PostProvider>
-          <AuthProvider>
+          <AuthProvider >
             <Routes>
 
               {/* Estensione del layout "nav + footer" a tutte le pagine */}
-              <Route path="/" element={<Layout />}>
+              <Route path="/" element={ <Layout />}>
                 {/* Rotte pubbliche */}
                 <Route path="*" element={<NotFound />} />
                 <Route index element={<Home />} />
@@ -35,7 +39,7 @@ function App() {
               </Route>
 
               {/* Rotte protette dal middleware di autenticazione */}
-              <Route path="/" element={<LogChecker><Layout /></LogChecker>}>
+              <Route path="/" element={<DashboardLayout><Layout /></DashboardLayout>}>
                <Route path="posts">
                 <Route index element={<PostIndex />} />
                 <Route path=":id">
